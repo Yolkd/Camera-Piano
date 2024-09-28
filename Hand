@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import time
+from keyPress import Button
 
 class handDetector():
     def __init__(self,  mode = False, maxHands = 2, detectionCon = 0.5, trackCon = 0.5, modelComplexity=1):
@@ -53,8 +54,8 @@ def main():
 
     while True:
         success, img = cap.read()
+        img = cv2.flip(img, 1)
         img = detector.findHands(img)
-        img_flip = cv2.flip(img, 1)
         lmList = detector.findPosition(img)
         if len(lmList) != 0:
             print(lmList[4])
@@ -62,9 +63,24 @@ def main():
         fps = 1/(cTime-pTime)
         pTime = cTime
 
+        buttonList = [Button([100, 100], "Q"), Button([300, 150], "Q")]
+        img = buttonList[0].keyCreate(img)
+        img = buttonList[1].keyCreate(img)
+
+        if lmList:
+             for button in buttonList:
+                  x, y = button.pos
+                  w, h = button.size
+
+                  if (x < lmList[4][1]<x+w or x < lmList[8][1]<x+w or x < lmList[12][1]<x+w or x < lmList[16][1]<x+w or x < lmList[20][1]<x+w):
+                    if (y < lmList[4][2]<y+h or y < lmList[8][2]<y+h or x < lmList[12][2]<y+h or x < lmList[16][2]<y+h or x < lmList[20][2]<y+h):
+                        cv2.rectangle(img, button.pos, (x+w, y+h), (0, 255, 0), cv2.FILLED)
+                        cv2.putText(img, button.text, (x + 25, y + 25), cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
+                  
+
         cv2.putText(img, str(int(fps)), (10,70), cv2.FONT_HERSHEY_COMPLEX, 2, (255,155,240), 2)
 
-        cv2.imshow("/Image", img_flip)
+        cv2.imshow("/Image", img)
         key = cv2.waitKey(1)
         if key == 27:
              break
