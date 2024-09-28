@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 import time
 from keyPress import Button
+from sound import note
+import threading 
 
 class handDetector():
     def __init__(self,  mode = False, maxHands = 2, detectionCon = 0.5, trackCon = 0.5, modelComplexity=1):
@@ -63,19 +65,22 @@ def main():
         fps = 1/(cTime-pTime)
         pTime = cTime
 
-        buttonList = [Button([100, 100], "Q"), Button([300, 150], "Q")]
-        img = buttonList[0].keyCreate(img)
-        img = buttonList[1].keyCreate(img)
-
+        buttonList = [Button([0, 350], "C4"), Button([100, 350], "D4"), Button([200, 350], "E4"), Button([300, 350], "F4"), Button([400, 350], "G4"), Button([500, 350], "A4"), Button([600, 350], "B4")]
+        i = 0
+        for i in range(len((buttonList))):
+             img = buttonList[i].keyCreate(img)
+    
         if lmList:
              for button in buttonList:
                   x, y = button.pos
                   w, h = button.size
 
-                  if (x < lmList[4][1]<x+w or x < lmList[8][1]<x+w or x < lmList[12][1]<x+w or x < lmList[16][1]<x+w or x < lmList[20][1]<x+w):
-                    if (y < lmList[4][2]<y+h or y < lmList[8][2]<y+h or x < lmList[12][2]<y+h or x < lmList[16][2]<y+h or x < lmList[20][2]<y+h):
+                  if ((x < lmList[4][1]<x+w and y < lmList[4][2]<y+h) or (x < lmList[8][1]<x+w and y < lmList[8][2]<y+h) or (x < lmList[12][1]<x+w and y < lmList[12][2]<y+h) or (x < lmList[16][1]<x+w and y < lmList[16][2]<y+h) or (x < lmList[20][1]<x+w and y < lmList[20][2]<y+h)):
                         cv2.rectangle(img, button.pos, (x+w, y+h), (0, 255, 0), cv2.FILLED)
-                        cv2.putText(img, button.text, (x + 25, y + 25), cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
+                        cv2.putText(img, button.text, (x , y + 100), cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 0), 5)
+                        timer = threading.Thread(target = note, args = (button.text))
+                        timer.start
+
                   
 
         cv2.putText(img, str(int(fps)), (10,70), cv2.FONT_HERSHEY_COMPLEX, 2, (255,155,240), 2)
