@@ -219,15 +219,15 @@ while True:
     currentNotes2 = []
     success, img = cap.read()
     img = cv2.flip(img, 1)
-    hands, img = detector.findHands(img)
+    hands, img = detector.findHands(img, draw=False)
     #hands = detector.findHands(img, draw=False)
 
-    buttonList = [Button([0, 300], "C"+str(4+octave)), Button([30, 300], "C#"+str(4+octave) ), Button([90, 300], "D#"+str(4+octave)), Button([120, 300], "E"+str(4+octave)), 
-                Button([150, 300], "F"+str(4+octave)), Button([180, 300], "F#"+str(4+octave)), Button([210, 300], "G"+str(4+octave)), Button([240, 300], "G#"+str(4+octave)), 
-                Button([270, 300], "A"+str(4+octave)), Button([300, 300], "A#"+str(4+octave)), Button([330, 300], "B"+str(4+octave)), Button([360, 300], "C"+str(5+octave)), 
-                Button([390, 300], "C#"+str(5+octave)), Button([420, 300], "D"+str(5+octave)), Button([450, 300], "D#"+str(5+octave)), Button([480, 300], "E"+str(5+octave)), 
-                Button([510, 300], "F"+str(5+octave)), Button([540, 300], "F#"+str(5+octave)), Button([570, 300], "G"+str(5+octave)), Button([600, 300], "G#"+str(5+octave)),
-                Button([630, 300], "A"+str(5+octave)), Button([660, 300], "A#"+str(5+octave)), Button([690, 300], "B"+str(5+octave)), Button([60, 300], "D"+str(4+octave)),]
+    buttonList = [Button([0, 300], "C"+str(4+octave)), Button([26, 300], "C#"+str(4+octave) ), Button([78, 300], "D#"+str(4+octave)), Button([104, 300], "E"+str(4+octave)), 
+                Button([130, 300], "F"+str(4+octave)), Button([156, 300], "F#"+str(4+octave)), Button([182, 300], "G"+str(4+octave)), Button([208, 300], "G#"+str(4+octave)), 
+                Button([234, 300], "A"+str(4+octave)), Button([260, 300], "A#"+str(4+octave)), Button([286, 300], "B"+str(4+octave)), Button([312, 300], "C"+str(5+octave)), 
+                Button([338, 300], "C#"+str(5+octave)), Button([364, 300], "D"+str(5+octave)), Button([390, 300], "D#"+str(5+octave)), Button([416, 300], "E"+str(5+octave)), 
+                Button([442, 300], "F"+str(5+octave)), Button([468, 300], "F#"+str(5+octave)), Button([494, 300], "G"+str(5+octave)), Button([520, 300], "G#"+str(5+octave)),
+                Button([546, 300], "A"+str(5+octave)), Button([572, 300], "A#"+str(5+octave)), Button([598, 300], "B"+str(5+octave)), Button([52, 300], "D"+str(4+octave)),]
     for i in range(len((buttonList))):
              
              img = buttonList[i].keyCreate(img)
@@ -240,7 +240,7 @@ while True:
         if (iteration%10==0):
             if (fingerup==[1, 1, 0, 1, 1]):
                 mid.save('music.mid')
-                sys.exit(-1)
+                break
             elif (fingerup==[0, 1, 0, 0, 0]):
                 if (octave < 1):
                     octave+=1
@@ -474,7 +474,7 @@ while True:
                 #if (not pressedDown[i]):
                 
                 cv2.rectangle(img, button.pos, (x+w, y+h), (0, 255, 0), cv2.FILLED)
-                cv2.putText(img, button.text, (x, y + 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
+                # cv2.putText(img, button.text, (x, y + 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
                 my_d[button.text] = True    
                     
                 currentNotes.append(button.text)
@@ -498,7 +498,7 @@ while True:
                 #if (not pressedDown[i]):
                      
                 cv2.rectangle(img, button.pos, (x+w, y+h), (0, 255, 0), cv2.FILLED)
-                cv2.putText(img, button.text, (x, y + 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
+                # cv2.putText(img, button.text, (x, y + 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 255, 255), 5)
                 my_d2[button.text] = True
                 currentNotes2.append(button.text)
 
@@ -520,3 +520,4 @@ while True:
     key = cv2.waitKey(1)
     if key == 27:
          break
+print(conversion("G4"))
