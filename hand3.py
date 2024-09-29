@@ -7,14 +7,27 @@ import threading
 import pygame
 import pygame.midi
 import time
+import sys
+import mido
+from mido import Message, MidiFile, MidiTrack
 
-# from mido import Message, MidiFile, MidiTrack
 
+mid = MidiFile()
+track = MidiTrack()
+mid.tracks.append(track)
+track.append(Message('program_change', program=12, time=0))
 
 pygame.init()
 pygame.midi.init()
 player = pygame.midi.Output(0)
 player.set_instrument(0)
+
+def convertMIDI(input):
+    for i in range(len(input)):
+        track.append(Message('note_on', note=input[i], velocity=64, time=0))
+    track.append(Message('note_off', note=input[0], velocity=64, time=480))
+    for i in range(1, len(input)):
+        track.append(Message('note_off', note=input[i], velocity=64, time=0))
 
 def conversion(note):
     convert = 12
@@ -60,7 +73,13 @@ def conversion(note):
         convert+=11
     return convert
 
+
 def merger(currentNotes, hand):
+    convertedNotes = currentNotes.copy()
+    for i in range(len(convertedNotes)):
+        convertedNotes[i] = conversion(convertedNotes[i])
+    if (len(convertedNotes)>0):
+        convertMIDI(convertedNotes)
     if hand == 1:
         for i in range(len(currentNotes)):
             if not play_d[currentNotes[i]]:
@@ -81,47 +100,116 @@ def merger(currentNotes, hand):
 
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands = 2)
-
+octave = 0
 my_d = {
-    "A4": False,
-    "B4": False,
-    "C4": False,
-    "D4": False,
-    "E4": False,
-    "F4": False,
-    "G4": False,
+    "A"+str(4+octave): False,
+    "B"+str(4+octave): False,
+    "C"+str(4+octave): False,
+    "D"+str(4+octave): False,
+    "E"+str(4+octave): False,
+    "F"+str(4+octave): False,
+    "G"+str(4+octave): False,
+    "A#"+str(4+octave): False,
+    "C#"+str(4+octave): False,
+    "D#"+str(4+octave): False,
+    "F#"+str(4+octave): False,
+    "G#"+str(4+octave): False,
+    "A"+str(5+octave): False,
+    "B"+str(5+octave): False,
+    "C"+str(5+octave): False,
+    "D"+str(5+octave): False,
+    "E"+str(5+octave): False,
+    "F"+str(5+octave): False,
+    "G"+str(5+octave): False,
+    "A#"+str(5+octave): False,
+    "C#"+str(5+octave): False,
+    "D#"+str(5+octave): False,
+    "F#"+str(5+octave): False,
+    "G#"+str(5+octave): False
 }
 play_d = {
-    "A4": False,
-    "B4": False,
-    "C4": False,
-    "D4": False,
-    "E4": False,
-    "F4": False,
-    "G4": False,
+    "A"+str(4+octave): False,
+    "B"+str(4+octave): False,
+    "C"+str(4+octave): False,
+    "D"+str(4+octave): False,
+    "E"+str(4+octave): False,
+    "F"+str(4+octave): False,
+    "G"+str(4+octave): False,
+    "A#"+str(4+octave): False,
+    "C#"+str(4+octave): False,
+    "D#"+str(4+octave): False,
+    "F#"+str(4+octave): False,
+    "G#"+str(4+octave): False,
+    "A"+str(5+octave): False,
+    "B"+str(5+octave): False,
+    "C"+str(5+octave): False,
+    "D"+str(5+octave): False,
+    "E"+str(5+octave): False,
+    "F"+str(5+octave): False,
+    "G"+str(5+octave): False,
+    "A#"+str(5+octave): False,
+    "C#"+str(5+octave): False,
+    "D#"+str(5+octave): False,
+    "F#"+str(5+octave): False,
+    "G#"+str(5+octave): False
 }
 my_d2 = {
-    "A4": False,
-    "B4": False,
-    "C4": False,
-    "D4": False,
-    "E4": False,
-    "F4": False,
-    "G4": False,
+    "A"+str(4+octave): False,
+    "B"+str(4+octave): False,
+    "C"+str(4+octave): False,
+    "D"+str(4+octave): False,
+    "E"+str(4+octave): False,
+    "F"+str(4+octave): False,
+    "G"+str(4+octave): False,
+    "A#"+str(4+octave): False,
+    "C#"+str(4+octave): False,
+    "D#"+str(4+octave): False,
+    "F#"+str(4+octave): False,
+    "G#"+str(4+octave): False,
+    "A"+str(5+octave): False,
+    "B"+str(5+octave): False,
+    "C"+str(5+octave): False,
+    "D"+str(5+octave): False,
+    "E"+str(5+octave): False,
+    "F"+str(5+octave): False,
+    "G"+str(5+octave): False,
+    "A#"+str(5+octave): False,
+    "C#"+str(5+octave): False,
+    "D#"+str(5+octave): False,
+    "F#"+str(5+octave): False,
+    "G#"+str(5+octave): False
 }
 play_d2 = {
-    "A4": False,
-    "B4": False,
-    "C4": False,
-    "D4": False,
-    "E4": False,
-    "F4": False,
-    "G4": False,
+    "A"+str(4+octave): False,
+    "B"+str(4+octave): False,
+    "C"+str(4+octave): False,
+    "D"+str(4+octave): False,
+    "E"+str(4+octave): False,
+    "F"+str(4+octave): False,
+    "G"+str(4+octave): False,
+    "A#"+str(4+octave): False,
+    "C#"+str(4+octave): False,
+    "D#"+str(4+octave): False,
+    "F#"+str(4+octave): False,
+    "G#"+str(4+octave): False,
+    "A"+str(5+octave): False,
+    "B"+str(5+octave): False,
+    "C"+str(5+octave): False,
+    "D"+str(5+octave): False,
+    "E"+str(5+octave): False,
+    "F"+str(5+octave): False,
+    "G"+str(5+octave): False,
+    "A#"+str(5+octave): False,
+    "C#"+str(5+octave): False,
+    "D#"+str(5+octave): False,
+    "F#"+str(5+octave): False,
+    "G#"+str(5+octave): False
 }
-pressedDown = [False, False, False, False, False, False, False]
+pressedDown = [False, False, False, False, False, False, False, False, False, False, False, False]
 pTime = 0
 cTime = 0
 iteration = 0
+
 
 while True:
     cTime = time.time()
@@ -134,13 +222,12 @@ while True:
     hands, img = detector.findHands(img)
     #hands = detector.findHands(img, draw=False)
 
-    
-    buttonList = [Button([0, 300], "C4"), Button([30, 300], "C#4", ), Button([90, 300], "D#4"), Button([120, 300], "E4"), 
-                Button([150, 300], "F4"), Button([180, 300], "F#4"), Button([210, 300], "G4"), Button([240, 300], "G#4"), 
-                Button([270, 300], "A4"), Button([300, 300], "A#4"), Button([330, 300], "B4"), Button([360, 300], "C5"), 
-                Button([390, 300], "C#5"), Button([420, 300], "D5"), Button([450, 300], "D#5"), Button([480, 300], "E5"), 
-                Button([510, 300], "F5"), Button([540, 300], "F#5"), Button([570, 300], "G5"), Button([600, 300], "G#5"),
-                Button([630, 300], "A5"), Button([660, 300], "A#5"), Button([690, 300], "B5"), Button([60, 300], "D4"),]
+    buttonList = [Button([0, 300], "C"+str(4+octave)), Button([30, 300], "C#"+str(4+octave) ), Button([90, 300], "D#"+str(4+octave)), Button([120, 300], "E"+str(4+octave)), 
+                Button([150, 300], "F"+str(4+octave)), Button([180, 300], "F#"+str(4+octave)), Button([210, 300], "G"+str(4+octave)), Button([240, 300], "G#"+str(4+octave)), 
+                Button([270, 300], "A"+str(4+octave)), Button([300, 300], "A#"+str(4+octave)), Button([330, 300], "B"+str(4+octave)), Button([360, 300], "C"+str(5+octave)), 
+                Button([390, 300], "C#"+str(5+octave)), Button([420, 300], "D"+str(5+octave)), Button([450, 300], "D#"+str(5+octave)), Button([480, 300], "E"+str(5+octave)), 
+                Button([510, 300], "F"+str(5+octave)), Button([540, 300], "F#"+str(5+octave)), Button([570, 300], "G"+str(5+octave)), Button([600, 300], "G#"+str(5+octave)),
+                Button([630, 300], "A"+str(5+octave)), Button([660, 300], "A#"+str(5+octave)), Button([690, 300], "B"+str(5+octave)), Button([60, 300], "D"+str(4+octave)),]
     for i in range(len((buttonList))):
              
              img = buttonList[i].keyCreate(img)
@@ -149,8 +236,233 @@ while True:
     if hands:
         hand1 = hands[0]
         lmList1 = hand1["lmList"]
-        bbox1 = hand1["bbox"]
-        hanType1 = hand1["type"]
+        fingerup = detector.fingersUp(hands[0])
+        if (iteration%10==0):
+            if (fingerup==[1, 1, 0, 1, 1]):
+                mid.save('music.mid')
+                sys.exit(-1)
+            elif (fingerup==[0, 1, 0, 0, 0]):
+                if (octave < 1):
+                    octave+=1
+                    currentNotes = []
+                    currentNotes2 = []
+                    my_d = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    play_d = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    my_d2 = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    play_d2 = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    time.sleep(0.2)
+                    continue
+            elif (fingerup==[0,1,1,0,0]):
+                if (octave>-2):
+                    octave-=1
+                    currentNotes = []
+                    currentNotes2 = []
+                    my_d = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    play_d = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    my_d2 = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    play_d2 = {
+                        "A"+str(4+octave): False,
+                        "B"+str(4+octave): False,
+                        "C"+str(4+octave): False,
+                        "D"+str(4+octave): False,
+                        "E"+str(4+octave): False,
+                        "F"+str(4+octave): False,
+                        "G"+str(4+octave): False,
+                        "A#"+str(4+octave): False,
+                        "C#"+str(4+octave): False,
+                        "D#"+str(4+octave): False,
+                        "F#"+str(4+octave): False,
+                        "G#"+str(4+octave): False,
+                        "A"+str(5+octave): False,
+                        "B"+str(5+octave): False,
+                        "C"+str(5+octave): False,
+                        "D"+str(5+octave): False,
+                        "E"+str(5+octave): False,
+                        "F"+str(5+octave): False,
+                        "G"+str(5+octave): False,
+                        "A#"+str(5+octave): False,
+                        "C#"+str(5+octave): False,
+                        "D#"+str(5+octave): False,
+                        "F#"+str(5+octave): False,
+                        "G#"+str(5+octave): False
+                    }
+                    time.sleep(0.2)
+                    continue
 
         for button in buttonList:
 
@@ -174,6 +486,7 @@ while True:
     if len(hands)==2:
         hand2 = hands[1]
         lmList2 = hand2["lmList"]
+        
 
         for button in buttonList:
 
@@ -195,8 +508,8 @@ while True:
     iteration += 1
     if not ((len(currentNotes) == 0) and (len(currentNotes2) == 0)):
         if (i == len(buttonList)-1):
-                print(currentNotes)
-                print(currentNotes2)
+                #print(currentNotes)
+                #print(currentNotes2)
                 merger(currentNotes, 1)
                 merger(currentNotes2, 2)
                 #print (len(currentNotes))      
