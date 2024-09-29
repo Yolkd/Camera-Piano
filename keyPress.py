@@ -4,7 +4,7 @@ from cvzone.HandTrackingModule import HandDetector
 detector = HandDetector(detectionCon=0.8)
 
 class Button():
-    def __init__(self, pos, text, size = [25, 300]):
+    def __init__(self, pos, text, size = [22, 300]):
         self.pos = pos
         self.size = size
         self.text = text
